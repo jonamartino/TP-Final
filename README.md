@@ -2,7 +2,7 @@
 
 ## Trabajo Práctico Final
 
-Enlace juego:                                                                                          
+Enlace juego: [Damas](https://jonamartino.github.io/TP-Final/index.html)              
 Enlace repositorio: [github/jonamartino](https://github.com/jonamartino/TP-Final)                                                        
 Contacto: [gmail/jonamartino](mailto:jonamartino@gmail.com)
 
