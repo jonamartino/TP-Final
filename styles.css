@@ -52,4 +52,12 @@
   .cell.allowed {
     background-color: rgba(0, 128, 0, 0.5); /* Color verde transparente para celdas permitidas */
   }
+  .cell.eatable {
+    background-color: rgba(0, 128, 0, 0.5); /* Color verde transparente para celdas comibles */
+  }
+  .cell.kill {
+    background-color: rgba(231, 0, 0, 0.5); /* Color rojo transparente para celdas comibles */
+  }
+
+  
   
