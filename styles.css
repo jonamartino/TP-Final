@@ -5,6 +5,33 @@
     display: flex;
     flex-wrap: wrap;
   }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+}
+
+.container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #000; /* Color de fondo por defecto (negro) */
+    color: #fff; /* Color del texto por defecto (blanco) */
+    transition: background-color 1s ease; /* Transición suave de 1 segundo para el cambio de color de fondo */
+}
+
+body.white-turn .container {
+    background-color: #fff; /* Color de fondo cuando es turno de las blancas */  
+    color: #000000; /* Color del texto cuando es turno de las negras */
+}
+
+body.black-turn .container {
+    background-color: #000; /* Color de fondo cuando es turno de las negras */
+    color: #fff; /* Color del texto cuando es turno de las negras */
+}
+
   .cell {
     width: 50px; /* Ajusta el tamaño según tus necesidades */
     height: 50px;
@@ -49,15 +76,15 @@
     height: 60%;
   }
   
+  /*
   .cell.allowed {
-    background-color: rgba(0, 128, 0, 0.5); /* Color verde transparente para celdas permitidas */
+    background-color: rgba(0, 128, 0, 0.5); /* Color verde transparente para celdas permitidas 
   }
   .cell.eatable {
-    background-color: rgba(0, 128, 0, 0.5); /* Color verde transparente para celdas comibles */
+    background-color: rgba(0, 128, 0, 0.5); /* Color verde transparente para celdas comibles
   }
   .cell.kill {
-    background-color: rgba(231, 0, 0, 0.5); /* Color rojo transparente para celdas comibles */
-  }
-
+    background-color: rgba(231, 0, 0, 0.5); /* Color rojo transparente para celdas comibles
+  } */
   
   

@@ -87,7 +87,15 @@ for (let row = 0; row < boardSize; row++) {
         movePiece(selectedCell, cell, selectedPieceColor);
       } else if (cell.classList.contains('eatable')) {
         const selectedPieceColor = selectedCell.classList.contains('black') ? 'black' : 'white';
-        movePiece(selectedCell, cell, selectedPieceColor);
+        movePiece(selectedCell, cell, selectedPieceColor); 
+        const nuevoeatable = determineEatableMoves(col, row, selectedPieceColor)
+        clearHighlightMoves();
+        console.log("nuevo eatable = ",nuevoeatable);
+
+        if(nuevoeatable.length==0){
+        changeTurn(); // Cambiar el turno después de mover la pieza
+        updatePieceCount(); // Actualizar la información de la cantidad de fichas
+        }
       } 
     });
 
@@ -150,8 +158,6 @@ function determineEatableMoves(selectedPieceX, selectedPieceY, pieceColor) {
         const possibleCell = document.querySelector(`.cell[data-x="${possibleX}"][data-y="${possibleY}"]`);
         if (!possibleCell.classList.contains('black') && possibleCell.classList.contains('white')){
           console.log("se puede comer la blanca en: ", possibleMove)
-          const killcell = possibleCell;
-          killcell.classList.add('kill');
           var eatableX = possibleX + yOffset;
           var eatableY = possibleY + 1;
           var eatableMove = { x: eatableX, y: eatableY };
@@ -160,7 +166,9 @@ function determineEatableMoves(selectedPieceX, selectedPieceY, pieceColor) {
           if(eatableX >= 0 && eatableX < boardSize && eatableY >= 0 && eatableY < boardSize){
             if(!eatableCell.classList.contains('black') && !eatableCell.classList.contains('white')){
               console.log("POSICION DE COMER EN: ", eatableMove)
-              eatableMoves.push(eatableMove);
+              eatableMoves.push(eatableMove);              
+              const killcell = possibleCell;
+              killcell.classList.add('kill');
             } 
           }
 
@@ -177,18 +185,19 @@ function determineEatableMoves(selectedPieceX, selectedPieceY, pieceColor) {
       const possibleCell = document.querySelector(`.cell[data-x="${possibleX}"][data-y="${possibleY}"]`);
       if (!possibleCell.classList.contains('white') && possibleCell.classList.contains('black')){
         console.log("se puede comer la negra en: ", possibleMove)
-        const killcell = possibleCell;
-        killcell.classList.add('kill');
         var eatableX = possibleX + yOffset;
         var eatableY = possibleY - 1;
         var eatableMove = { x: eatableX, y: eatableY };
         const eatableCell = document.querySelector(`.cell[data-x="${eatableX}"][data-y="${eatableY}"]`);
         console.log(eatableMove);
+        if(eatableX >= 0 && eatableX < boardSize && eatableY >= 0 && eatableY < boardSize){
         if(!eatableCell.classList.contains('black') && !eatableCell.classList.contains('white')){
           console.log("POSICION DE COMER EN: ", eatableMove)
           eatableMoves.push(eatableMove);
+          const killcell = possibleCell;
+          killcell.classList.add('kill');
         }
-      }
+      }}
     }
   }
   }
@@ -206,7 +215,7 @@ function highlightAllowedMoves(possibleMoves) {
   });
 }
 
-// Resaltar los movimientos permitidos agregando la clase .allowed a las celdas correspondientes
+// Resaltar los movimientos permitidos agregando la clase .eatable a las celdas correspondientes
 function highlightEatableMoves(eatableMoves) {
   eatableMoves.forEach(move => {
     const { x, y } = move;
@@ -230,9 +239,6 @@ function movePiece(sourceCell, targetCell, pieceColor) {
   clearHighlightMoves();
   selectedCell = null;
   console.log('Pieza comida');
-  changeTurn(); // Cambiar el turno después de mover la pieza
-  updatePieceCount(); // Actualizar la información de la cantidad de fichas
-
   }else {
   targetCell.classList.add(pieceColor);
   targetCell.classList.remove('allowed');
@@ -251,6 +257,10 @@ function movePiece(sourceCell, targetCell, pieceColor) {
 function changeTurn() {
   currentPlayer = currentPlayer === 'white' ? 'black' : 'white';
   message.textContent = `Turno actual: ${currentPlayer.charAt(0).toUpperCase() + currentPlayer.slice(1)}`;
+
+  // Agregar/clasificar el color del turno actual al cuerpo del documento
+  document.body.classList.remove('white-turn', 'black-turn');
+  document.body.classList.add(`${currentPlayer}-turn`);
 }
 
 // Actualizar la información de la cantidad de fichas
