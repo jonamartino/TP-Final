@@ -5,9 +5,18 @@
     <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
-    <div class="container">
+    <div id="container" class="container">
+        <div class="button-container">
+            <button id="loadButton" class="game-button">Cargar Partida</button>
+            <button id="startButton" class="game-button">Iniciar Juego</button>
+            <button id="restartButton" class="game-button">Reiniciar Juego</button>
+            <button id="saveButton" class="game-button">Guardar Partida</button>
+          </div>
+        <div id="player1" class="player-name"></div>  
         <div id="board"></div>
-        <div id="message">Turno actual: Negro</div>
+        <div id="player2" class="player-name"></div>
+        <div id="message">Turno actual: Blanco</div> 
+        
     </div>
 
     <script src="script.js"></script>
