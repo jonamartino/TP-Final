@@ -117,8 +117,9 @@ body.black-turn .container {
 .cell.white-queen::before {
   content: " ";
   position: absolute;
-  top: 15%;
-  left: 15%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: 70%;
   height: 70%;
   background-color: #fff; /* Color de la ficha reina blanca */
@@ -131,8 +132,9 @@ body.black-turn .container {
 .cell.black-queen::after {
   content: "";
   position: absolute;
-  top: 15%;
-  left: 15%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: 70%;
   height: 70%;
   background-color: #000000; /* Color de la ficha reina negra */
