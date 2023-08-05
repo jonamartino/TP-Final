@@ -142,25 +142,21 @@ body.black-turn .container {
   border: 4px solid gold; /* Cambia el color del borde a dorado */
   box-sizing: border-box; /* Hace que el borde se incluya en el tamaño total de la ficha */
 }
-
-
-  
-  
   .cell.clicked::before,
   .cell.clicked::after {
     width: 60%;
     height: 60%;
   }
   
-  /*
+  
   .cell.allowed {
-    background-color: rgba(0, 128, 0, 0.5); /* Color verde transparente para celdas permitidas 
+    background-color: rgba(0, 128, 0, 0.5); /* Color verde transparente para celdas permitidas */
   }
   .cell.eatable {
-    background-color: rgba(0, 128, 0, 0.5); /* Color verde transparente para celdas comibles
+    background-color: rgba(0, 128, 0, 0.5); /* Color verde transparente para celdas comibles*/
   }
   .cell.kill {
-    background-color: rgba(231, 0, 0, 0.5); /* Color rojo transparente para celdas comibles
-  } */
+    background-color: rgba(231, 0, 0, 0.5); /* Color rojo transparente para celdas comibles*/
+  } 
   
   

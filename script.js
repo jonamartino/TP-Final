@@ -23,7 +23,6 @@ window.addEventListener('load', () => {
   saveButton.style.display = 'none';
   restart.style.display = 'none';
   loadButton.style.display = 'flex';
-  
 });
 
 startButton.addEventListener('click', () => {
@@ -40,8 +39,11 @@ startButton.addEventListener('click', () => {
   saveButton.style.display = 'flex';
   restart.style.display = 'flex';
   startButton.style.display = 'none';
-
 });
+
+// Agregamos el evento click al botón "Guardar Partida"
+const saveButton = document.getElementById('saveButton');
+saveButton.addEventListener('click', saveGame);
 
 loadButton.addEventListener('click', () => {
   juego();
@@ -49,7 +51,6 @@ loadButton.addEventListener('click', () => {
   if(currentPlayer == 'black'){
     container.style.color = 'white';
     container.style.backgroundColor = 'black';
-
   }else{
     container.style.color = 'black';
     container.style.backgroundColor = 'white';
@@ -62,15 +63,11 @@ loadButton.addEventListener('click', () => {
   saveButton.style.display = 'flex';
   restart.style.display = 'flex';
   startButton.style.display = 'none';
-
-
   });
 
 restart.addEventListener('click', () => {
   resetGame();
-
 });
-
 
 function juego(){
   // Configurar piezas iniciales
@@ -100,7 +97,6 @@ var initialPiecePositions = [
   { x: 4, y: 7 },
   { x: 6, y: 7 }
 ];
-
 // Generar el tablero
 for (let row = 0; row < boardSize; row++) {
   for (let col = 0; col < boardSize; col++) {
@@ -108,13 +104,11 @@ for (let row = 0; row < boardSize; row++) {
     cell.classList.add('cell');
     cell.setAttribute('data-x', col);
     cell.setAttribute('data-y', row);
-
     if ((row + col) % 2 === 0) {
       cell.classList.add('light');
     } else {
       cell.classList.add('dark');
     }
-
     if(currentPlayer == 'black'){
       container.style.color = 'white';
       container.style.backgroundColor = 'black';
@@ -135,9 +129,11 @@ for (let row = 0; row < boardSize; row++) {
           if(cell.classList.contains(`${currentPlayer}-queen`)){
             const queenColor = cell.classList.contains('black-queen') ? 'black-queen' : 'white-queen';
             const queenMoves = determinePossibleQueenMoves(col, row, queenColor);
-            console.log('Posibles Ataques de reina:');
+            const queenEatable = determineQueenEatable(col, row, queenColor);
+            console.log('Posibles Ataques de reina:', queenEatable);
             console.log('Posibles movimientos de reina:', queenMoves);
             highlightAllowedMoves(queenMoves);
+            highlightEatableMoves(queenEatable);
           }else {
             const possibleMoves = determinePossibleMoves(col, row, pieceColor);
             const eatableMoves = determineEatableMoves(col, row, pieceColor);
@@ -146,7 +142,6 @@ for (let row = 0; row < boardSize; row++) {
             highlightAllowedMoves(possibleMoves);
             highlightEatableMoves(eatableMoves);
           }
-
         } else if (selectedCell === cell) {
           selectedCell.classList.remove('clicked');
           clearHighlightMoves();
@@ -161,9 +156,11 @@ for (let row = 0; row < boardSize; row++) {
           if(cell.classList.contains(`${currentPlayer}-queen`)){
             const queenColor = cell.classList.contains('black-queen') ? 'black-queen' : 'white-queen';
             const queenMoves = determinePossibleQueenMoves(col, row, queenColor);
-            console.log('Posibles Ataques de reina:');
+            const queenEatable = determineQueenEatable(col, row, queenColor);
+            console.log('Posibles Ataques de reina:', queenEatable);
             console.log('Posibles movimientos de reina:', queenMoves);
             highlightAllowedMoves(queenMoves);
+            highlightEatableMoves(queenEatable);
           }else {
           const possibleMoves = determinePossibleMoves(col, row, pieceColor);
           const eatableMoves = determineEatableMoves(col, row, pieceColor);
@@ -185,12 +182,18 @@ for (let row = 0; row < boardSize; row++) {
       if(selectedCell.classList.contains('black-queen')||selectedCell.classList.contains('white-queen')){
         const selectedQueenColor = selectedCell.classList.contains('black-queen') ? 'black-queen' : 'white-queen';
         movePiece(selectedCell, cell, selectedQueenColor);
+        const nuevoqueen = determineQueenEatable(col,row,selectedQueenColor);
+        clearHighlightMoves();
+        if(nuevoqueen.length==0){
+        changeTurn(); // Cambiar el turno después de mover la pieza
+        updatePieceCount(); // Actualizar la información de la cantidad de fichas
+        }
       } else {
         const selectedPieceColor = selectedCell.classList.contains('black') ? 'black' : 'white';
         movePiece(selectedCell, cell, selectedPieceColor); 
-        const nuevoeatable = determineEatableMoves(col, row, selectedPieceColor)
-        clearHighlightMoves();
+        const nuevoeatable = determineEatableMoves(col, row, selectedPieceColor);
 
+        clearHighlightMoves();
         if(nuevoeatable.length==0){
         changeTurn(); // Cambiar el turno después de mover la pieza
         updatePieceCount(); // Actualizar la información de la cantidad de fichas
@@ -205,14 +208,11 @@ for (let row = 0; row < boardSize; row++) {
         container.style.backgroundColor = 'white';
       }
     });
-
     const isInitialPiece = initialPiecePositions.some(position => position.x === col && position.y === row);
-
     if (isInitialPiece) {
       const pieceColor = (row < 3) ? 'black' : 'white';
       cell.classList.add(pieceColor);
     }
-
     board.appendChild(cell);
   }
 }
@@ -224,7 +224,6 @@ function resetGame() {
   cells.forEach(cell => {
     cell.classList.remove('black', 'white', 'white-queen', 'black-queen');
   });
-
   // Restaurar las fichas iniciales en sus posiciones iniciales
   var initialPiecePositions = [
     { x: 1, y: 0 },
@@ -252,7 +251,6 @@ function resetGame() {
     { x: 4, y: 7 },
     { x: 6, y: 7 }
   ];
-
     // Reiniciar el turno y contar las fichas nuevamente
     currentPlayer = 'white';
     updatePieceCount();
@@ -263,27 +261,18 @@ function resetGame() {
     container.style.color = 'black';
     container.style.backgroundColor = 'white';
   }
-
   initialPiecePositions.forEach(position => {
     const { x, y } = position;
     const cell = document.querySelector(`.cell[data-x="${x}"][data-y="${y}"]`);
     const pieceColor = (y < 3) ? 'black' : 'white';
     cell.classList.add(pieceColor);
   });
-
-
-
-
-
   // Eliminar el resaltado de movimientos
   clearHighlightMoves();
-
   // Mostrar el botón de carga y ocultar el botón de guardar y reiniciar
   loadButton.style.display = 'none';
   saveButton.style.display = 'flex';
   restart.style.display = 'flex';
-
-  
   // Cerrar el tablero
   board.classList.add('closed');
 }
@@ -292,7 +281,6 @@ function resetGame() {
 function determinePossibleMoves(selectedPieceX, selectedPieceY, pieceColor) {
   var possibleMoves = [];
   var moveOffsets = [-1, 1];
-
   if (pieceColor === 'black') {
     // Movimiento para fichas negras (hacia abajo)
     for (var yOffset of moveOffsets) {
@@ -301,7 +289,8 @@ function determinePossibleMoves(selectedPieceX, selectedPieceY, pieceColor) {
       if (possibleX >= 0 && possibleX < boardSize && possibleY >= 0 && possibleY < boardSize) {
         var possibleMove = { x: possibleX, y: possibleY };
         const possibleCell = document.querySelector(`.cell[data-x="${possibleX}"][data-y="${possibleY}"]`);
-        if (!possibleCell.classList.contains('black') && !possibleCell.classList.contains('white')) {
+        if (!possibleCell.classList.contains('black') && !possibleCell.classList.contains('white') &&
+            !possibleCell.classList.contains('white-queen') && !possibleCell.classList.contains('black-queen')) {
           possibleMoves.push(possibleMove);
         }
       }
@@ -314,13 +303,16 @@ function determinePossibleMoves(selectedPieceX, selectedPieceY, pieceColor) {
       if (possibleX >= 0 && possibleX < boardSize && possibleY >= 0 && possibleY < boardSize) {
         var possibleMove = { x: possibleX, y: possibleY };
         const possibleCell = document.querySelector(`.cell[data-x="${possibleX}"][data-y="${possibleY}"]`);
-        if (!possibleCell.classList.contains('black') && !possibleCell.classList.contains('white')) {
+        if (!possibleCell.classList.contains('white') && !possibleCell.classList.contains('black') &&
+            !possibleCell.classList.contains('black-queen') && !possibleCell.classList.contains('white-queen')) {
           possibleMoves.push(possibleMove);
         }
       }
     }
   } else if(pieceColor === 'black-queen' || pieceColor === 'white-queen') {
-    return determinePossibleQueenMoves(selectedPieceX, selectedPieceY, pieceColor);
+    console.log('test');
+    console.log('piececolor: ',pieceColor);
+    //return determinePossibleQueenMoves(selectedPieceX, selectedPieceY, pieceColor);
   }
   return possibleMoves;
 }
@@ -328,29 +320,27 @@ function determinePossibleMoves(selectedPieceX, selectedPieceY, pieceColor) {
 function determinePossibleQueenMoves(selectedPieceX, selectedPieceY, pieceColor) {
   const possibleMoves = [];
   const moveOffsets = [-1, 1];
-
   // Movimiento para arriba y abajo
   for (const xOffset of moveOffsets) {
     for (const yOffset of moveOffsets) {
       let possibleX = selectedPieceX + xOffset;
       let possibleY = selectedPieceY + yOffset;
-
       while (possibleX >= 0 && possibleX < boardSize && possibleY >= 0 && possibleY < boardSize) {
         const possibleCell = document.querySelector(`.cell[data-x="${possibleX}"][data-y="${possibleY}"]`);
-        if (!possibleCell.classList.contains('black') && !possibleCell.classList.contains('white')) {
+        if (!possibleCell.classList.contains('black') && !possibleCell.classList.contains('white') && !possibleCell.classList.contains('white-queen') && !possibleCell.classList.contains('black-queen')){
           possibleMoves.push({ x: possibleX, y: possibleY });
         } else {
           break; // No podemos saltar sobre otras fichas
         }
-
+        console.log('test1');
         possibleX += xOffset;
         possibleY += yOffset;
       }
     }
   }
-
   return possibleMoves;
 }
+
 // Calcular las posiciones de movimiento de ataque de las fichas. Devuelve la posicion donde se movera la ficha.
 function determineEatableMoves(selectedPieceX, selectedPieceY, pieceColor) {
   var eatableMoves = [];
@@ -361,15 +351,18 @@ function determineEatableMoves(selectedPieceX, selectedPieceY, pieceColor) {
       var possibleX = selectedPieceX + yOffset;
       var possibleY = selectedPieceY + 1;
       if (possibleX >= 0 && possibleX < boardSize && possibleY >= 0 && possibleY < boardSize) {
-        var possibleMove = { x: possibleX, y: possibleY };
         const possibleCell = document.querySelector(`.cell[data-x="${possibleX}"][data-y="${possibleY}"]`);
-        if (!possibleCell.classList.contains('black') && possibleCell.classList.contains('white')){
+        if (!possibleCell.classList.contains('black') && possibleCell.classList.contains('white') ||
+            !possibleCell.classList.contains('black') && possibleCell.classList.contains('white-queen')
+        ){
           var eatableX = possibleX + yOffset;
           var eatableY = possibleY + 1;
           var eatableMove = { x: eatableX, y: eatableY };
           const eatableCell = document.querySelector(`.cell[data-x="${eatableX}"][data-y="${eatableY}"]`);
           if(eatableX >= 0 && eatableX < boardSize && eatableY >= 0 && eatableY < boardSize){
-            if(!eatableCell.classList.contains('black') && !eatableCell.classList.contains('white')){
+            if(!eatableCell.classList.contains('black') && !eatableCell.classList.contains('white') &&
+               !eatableCell.classList.contains('black-queen') && !eatableCell.classList.contains('white-queen')
+            ){
               console.log("POSICION DE COMER EN: ", eatableMove)
               eatableMoves.push(eatableMove);              
               const killcell = possibleCell;
@@ -388,13 +381,17 @@ function determineEatableMoves(selectedPieceX, selectedPieceY, pieceColor) {
     if (possibleX >= 0 && possibleX < boardSize && possibleY >= 0 && possibleY < boardSize) {
       var possibleMove = { x: possibleX, y: possibleY };
       const possibleCell = document.querySelector(`.cell[data-x="${possibleX}"][data-y="${possibleY}"]`);
-      if (!possibleCell.classList.contains('white') && possibleCell.classList.contains('black')){
+      if (!possibleCell.classList.contains('white') && possibleCell.classList.contains('black') ||
+      !possibleCell.classList.contains('white') && possibleCell.classList.contains('black-queen')
+      ){
         var eatableX = possibleX + yOffset;
         var eatableY = possibleY - 1;
         var eatableMove = { x: eatableX, y: eatableY };
         const eatableCell = document.querySelector(`.cell[data-x="${eatableX}"][data-y="${eatableY}"]`);
         if(eatableX >= 0 && eatableX < boardSize && eatableY >= 0 && eatableY < boardSize){
-        if(!eatableCell.classList.contains('black') && !eatableCell.classList.contains('white')){
+        if(!eatableCell.classList.contains('black') && !eatableCell.classList.contains('white') &&
+           !eatableCell.classList.contains('black-queen') && !eatableCell.classList.contains('white-queen')
+          ){
           console.log("POSICION DE COMER EN: ", eatableMove)
           eatableMoves.push(eatableMove);
           const killcell = possibleCell;
@@ -403,10 +400,82 @@ function determineEatableMoves(selectedPieceX, selectedPieceY, pieceColor) {
       }}
     }
   }
+  } 
+
+  return eatableMoves;
+}
+function determineQueenEatable(selectedPieceX, selectedPieceY, queenColor) {
+  const eatableMoves = [];
+  const moveOffsets = [-1, 1];
+  const selectedCell = document.querySelector(`.cell[data-x="${selectedPieceX}"][data-y="${selectedPieceY}"]`);
+  // Movimiento para arriba y abajo
+  for (const xOffset of moveOffsets) {
+    for (const yOffset of moveOffsets) {
+      if (xOffset === 0 && yOffset === 0) continue; // Saltar si el offset es (0, 0)
+
+      let possibleX = selectedPieceX + xOffset;
+      let possibleY = selectedPieceY + yOffset;
+
+      while (possibleX >= 0 && possibleX < boardSize && possibleY >= 0 && possibleY < boardSize) {
+        const possibleCell = document.querySelector(`.cell[data-x="${possibleX}"][data-y="${possibleY}"]`);
+        
+        if (possibleCell.classList.contains('black')&&selectedCell.classList.contains('black-queen')){
+          break;//cortar recorrido si hay una ficha de mismo color contigua 
+        } else if ((selectedCell.classList.contains('black-queen') && (( 
+            !possibleCell.classList.contains('black-queen') &&
+            !possibleCell.classList.contains('black') && possibleCell.classList.contains('white')) || 
+            !possibleCell.classList.contains('black-queen') &&
+          ((!possibleCell.classList.contains('black') && possibleCell.classList.contains('white-queen'))))) ){
+          console.log(selectedCell.classList.contains('black-queen'));  
+          // Si es una celda comestible
+          var eatableX = possibleX + xOffset;
+          var eatableY = possibleY + yOffset;
+          var eatableMove = { x: eatableX, y: eatableY };
+          const eatableCell = document.querySelector(`.cell[data-x="${eatableX}"][data-y="${eatableY}"]`);
+
+          if (eatableX >= 0 && eatableX < boardSize && eatableY >= 0 && eatableY < boardSize) {
+            if (!eatableCell.classList.contains(queenColor) && !eatableCell.classList.contains('black') && !eatableCell.classList.contains('white') && !eatableCell.classList.contains('white-queen') && !eatableCell.classList.contains('black-queen')) {
+              console.log("POSICION DE COMER EN: ", eatableMove)
+              eatableMoves.push(eatableMove);
+              const killcell = possibleCell;
+              killcell.classList.add('kill');
+            }
+          }
+
+          break; // Detener el ciclo while al encontrar una celda comestible
+        } else if (possibleCell.classList.contains('white')&&selectedCell.classList.contains('white-queen')){
+          break; //cortar recorrido si hay una ficha de mismo color contigua 
+        } else if ((selectedCell.classList.contains('white-queen') && (( 
+                   !possibleCell.classList.contains('white-queen') &&
+                   !possibleCell.classList.contains('white') && possibleCell.classList.contains('black')) ||
+                   !possibleCell.classList.contains('white-queen') &&
+                 ((!possibleCell.classList.contains('white') && possibleCell.classList.contains('black-queen'))))) ){
+          var eatableX = possibleX + xOffset;
+          var eatableY = possibleY + yOffset;
+          var eatableMove = { x: eatableX, y: eatableY };
+          const eatableCell = document.querySelector(`.cell[data-x="${eatableX}"][data-y="${eatableY}"]`);
+          if (eatableX >= 0 && eatableX < boardSize && eatableY >= 0 && eatableY < boardSize) {
+            console.log(!eatableCell.classList.contains(queenColor), !eatableCell.classList.contains('black'), !eatableCell.classList.contains('white') , !eatableCell.classList.contains('white-queen'), !eatableCell.classList.contains('black-queen'));
+            if (!eatableCell.classList.contains(queenColor) && !eatableCell.classList.contains('black') && !eatableCell.classList.contains('white') && !eatableCell.classList.contains('white-queen') && !eatableCell.classList.contains('black-queen')) {
+              console.log("POSICION DE COMER EN: ", eatableMove)
+              eatableMoves.push(eatableMove);
+              const killcell = possibleCell;
+              killcell.classList.add('kill');
+            }
+          }
+
+          break; // Detener el ciclo while al encontrar una celda comestible
+        } else {
+          possibleX += xOffset;
+          possibleY += yOffset;
+        }
+      }
+    }
   }
 
   return eatableMoves;
 }
+
 // Resaltar los movimientos permitidos agregando la clase .allowed a las celdas correspondientes
 function highlightAllowedMoves(possibleMoves) {
   possibleMoves.forEach(move => {
@@ -433,7 +502,7 @@ function highlightEatableMoves(eatableMoves) {
 function movePiece(sourceCell, targetCell, pieceColor) {
   if(targetCell.classList.contains('eatable')){
   const killCell = document.querySelector('.cell.kill');
-  killCell.classList.remove('black','white');
+  killCell.classList.remove('black','white','black-queen','white-queen');
   sourceCell.classList.remove(pieceColor)
   const isQueen = shouldBecomeQueen(targetCell, pieceColor);
   if (isQueen) {
@@ -442,16 +511,14 @@ function movePiece(sourceCell, targetCell, pieceColor) {
   targetCell.classList.add(pieceColor);
   targetCell.classList.remove('allowed');
   targetCell.classList.remove('eatable');
-;
   sourceCell.classList.remove('clicked');
   clearHighlightMoves();
   selectedCell = null;
   console.log('Pieza comida');
-  }else if (sourceCell.classList.contains('white-queen')||sourceCell.classList.contains('black-queen')){
+  } else if (sourceCell.classList.contains('white-queen')||sourceCell.classList.contains('black-queen')){
     console.log('mov reina')
     targetCell.classList.add(pieceColor);
     targetCell.classList.remove('allowed');
-  
     sourceCell.classList.remove(pieceColor);
     sourceCell.classList.remove('clicked');
     clearHighlightMoves();
@@ -459,8 +526,7 @@ function movePiece(sourceCell, targetCell, pieceColor) {
     console.log('Pieza movida');
     changeTurn(); // Cambiar el turno después de mover la pieza
     updatePieceCount(); // Actualizar la información de la cantidad de fichas
-
-  }else {
+  } else {
     sourceCell.classList.remove(pieceColor);
     const isQueen = shouldBecomeQueen(targetCell, pieceColor);
     if (isQueen) {
@@ -468,7 +534,6 @@ function movePiece(sourceCell, targetCell, pieceColor) {
     }
   targetCell.classList.add(pieceColor);
   targetCell.classList.remove('allowed');
-
   sourceCell.classList.remove(pieceColor);
   sourceCell.classList.remove('clicked');
   clearHighlightMoves();
@@ -492,7 +557,6 @@ function shouldBecomeQueen(cell, pieceColor) {
 function changeTurn() {
   currentPlayer = currentPlayer === 'white' ? 'black' : 'white';  
   message.textContent = `Turno actual: ${currentPlayer.charAt(0).toUpperCase() + currentPlayer.slice(1)}`;
-
   // Agregar/clasificar el color del turno actual al cuerpo del documento
   document.body.classList.remove('white-turn', 'black-turn');
   document.body.classList.add(`${currentPlayer}-turn`);
@@ -504,7 +568,6 @@ function updatePieceCount() {
   totalPieces = piecesOnBoard.length;
   blackPieces = 0;
   whitePieces = 0;
-
   piecesOnBoard.forEach(cell => {
     if (cell.classList.contains('black')) {
       blackPieces++;
@@ -512,7 +575,6 @@ function updatePieceCount() {
       whitePieces++;
     }
   });
-
   console.log('Cantidad de fichas en el tablero:', totalPieces);
   console.log('Cantidad de fichas negras:', blackPieces);
   console.log('Cantidad de fichas blancas:', whitePieces);
@@ -523,8 +585,6 @@ function clearHighlightMoves() {
   const allowedCells = document.querySelectorAll('.cell.allowed');
   const eatableCells = document.querySelectorAll('.cell.eatable');
   const killCells = document.querySelectorAll('.cell.kill');
-  
-
   allowedCells.forEach(cell => {
     cell.classList.remove('allowed');
   });
@@ -535,6 +595,7 @@ function clearHighlightMoves() {
     cell.classList.remove('kill');
   });
 }
+
 function saveGameState() {
   const gameState = {
     currentPlayer,
@@ -544,14 +605,12 @@ function saveGameState() {
     player2,
     boardState: getBoardState(),
   };
-
   localStorage.setItem('gameState', JSON.stringify(gameState));
 }
 
 function getBoardState() {
   const boardState = [];
   const cells = document.querySelectorAll('.cell');
-
   cells.forEach(cell => {
     const pieceColor = cell.classList.contains('black') ? 'black' : cell.classList.contains('white') ? 'white' : cell.classList.contains('white-queen') ? 'white-queen' : cell.classList.contains('black-queen') ? 'black-queen':null;
     const position = {
@@ -561,7 +620,6 @@ function getBoardState() {
     };
     boardState.push(position);
   });
-
   return boardState;
 }
 
@@ -575,7 +633,6 @@ function loadGame() {
     whitePieces = gameState.whitePieces; 
     player1 = gameState.player1;
     player2 = gameState.player2;
-
     const boardState = gameState.boardState;
     restoreBoardState(boardState);
   } else {
@@ -598,12 +655,6 @@ function restoreBoardState(boardState) {
 function saveGame() {
   saveGameState();
   alert('Partida guardada exitosamente.');
-
 }
-
-// Agregamos el evento click al botón "Guardar Partida"
-const saveButton = document.getElementById('saveButton');
-saveButton.addEventListener('click', saveGame);
-
 
 console.log('Tablero creado');
