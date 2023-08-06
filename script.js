@@ -9,16 +9,24 @@ const container = document.getElementById('container');
 let currentPlayer = 'white'; // Turno del jugador actual
 let player1 = '';
 let player2 = '';
+let puntaje1 = 12;
+let puntaje2 = 12;
 // Variables globales para los nombres de los jugadores
 
 let selectedCell = null; // Celda seleccionada actualmente
 let totalPieces = 0; // Cantidad de fichas en el tablero
 let blackPieces = 0; // Cantidad de fichas negras
 let whitePieces = 0; // Cantidad de fichas blancas
+let blackQueenPieces = 0; //Cantidad de reinas negras
+let whiteQueenPieces = 0; //Cantidad de reinas blancas
 
 // Agrega un listener para que el juego comience automáticamente al cargar la página
 window.addEventListener('load', () => {
   board.classList.add('closed');
+  document.getElementById('player1').style.display = 'flex';
+  document.getElementById('player2').style.display = 'flex';
+  document.getElementById('player1').textContent = '\u00A0'; // Espacio en blanco
+  document.getElementById('player2').textContent = '\u00A0'; // Espacio en blanco
   message.style.display = 'none';
   saveButton.style.display = 'none';
   restart.style.display = 'none';
@@ -26,12 +34,15 @@ window.addEventListener('load', () => {
 });
 
 startButton.addEventListener('click', () => {
+  message.style.display = 'none';
+  document.getElementById('player1').style.display = 'flex';
+  document.getElementById('player2').style.display = 'flex';
   player1 = prompt('Ingrese el nombre del Jugador 1 (fichas negras):');
   player2 = prompt('Ingrese el nombre del Jugador 2 (fichas blancas):');
   juego();
   if (player1 && player2) {
-    document.getElementById('player1').textContent = `Turno de: ${player1}`;
-    document.getElementById('player2').textContent = `Turno de: ${player2}`;
+    document.getElementById('player1').textContent = `${player1}: ${puntaje1}`;
+    document.getElementById('player2').textContent = `${player2}: ${puntaje2}`;
   }
   board.classList.remove('closed');
   //startButton.style.display = 'none'; // Ocultar botón de inicio
@@ -56,8 +67,8 @@ loadButton.addEventListener('click', () => {
     container.style.backgroundColor = 'white';
   }
   if (player1 && player2) {
-    document.getElementById('player1').textContent = `Turno de: ${player1}`;
-    document.getElementById('player2').textContent = `Turno de: ${player2}`;
+    document.getElementById('player1').textContent = `${player1}: ${puntaje1}`;
+    document.getElementById('player2').textContent = `${player2}: ${puntaje2}`;
   }
   loadButton.style.display = 'none';
   saveButton.style.display = 'flex';
@@ -70,6 +81,7 @@ restart.addEventListener('click', () => {
 });
 
 function juego(){
+
   // Configurar piezas iniciales
 var initialPiecePositions = [
   { x: 1, y: 0 },
@@ -185,8 +197,8 @@ for (let row = 0; row < boardSize; row++) {
         const nuevoqueen = determineQueenEatable(col,row,selectedQueenColor);
         clearHighlightMoves();
         if(nuevoqueen.length==0){
-        changeTurn(); // Cambiar el turno después de mover la pieza
         updatePieceCount(); // Actualizar la información de la cantidad de fichas
+        changeTurn(); // Cambiar el turno después de mover la pieza
         }
       } else {
         const selectedPieceColor = selectedCell.classList.contains('black') ? 'black' : 'white';
@@ -195,8 +207,8 @@ for (let row = 0; row < boardSize; row++) {
 
         clearHighlightMoves();
         if(nuevoeatable.length==0){
-        changeTurn(); // Cambiar el turno después de mover la pieza
         updatePieceCount(); // Actualizar la información de la cantidad de fichas
+        changeTurn(); // Cambiar el turno después de mover la pieza
         }
       } 
     }
@@ -214,46 +226,32 @@ for (let row = 0; row < boardSize; row++) {
       cell.classList.add(pieceColor);
     }
     board.appendChild(cell);
+  
   }
 }
 }
 
+
 function resetGame() {
-  // Eliminar todas las fichas del tablero
-  const cells = document.querySelectorAll('.cell');
-  cells.forEach(cell => {
-    cell.classList.remove('black', 'white', 'white-queen', 'black-queen');
-  });
-  // Restaurar las fichas iniciales en sus posiciones iniciales
-  var initialPiecePositions = [
-    { x: 1, y: 0 },
-    { x: 3, y: 0 },
-    { x: 5, y: 0 },
-    { x: 7, y: 0 },
-    { x: 0, y: 1 },
-    { x: 2, y: 1 },
-    { x: 4, y: 1 },
-    { x: 6, y: 1 },
-    { x: 1, y: 2 },
-    { x: 3, y: 2 },
-    { x: 5, y: 2 },
-    { x: 7, y: 2 },
-    { x: 0, y: 5 },
-    { x: 2, y: 5 },
-    { x: 4, y: 5 },
-    { x: 6, y: 5 },
-    { x: 1, y: 6 },
-    { x: 3, y: 6 },
-    { x: 5, y: 6 },
-    { x: 7, y: 6 },
-    { x: 0, y: 7 },
-    { x: 2, y: 7 },
-    { x: 4, y: 7 },
-    { x: 6, y: 7 }
-  ];
-    // Reiniciar el turno y contar las fichas nuevamente
-    currentPlayer = 'white';
-    updatePieceCount();
+  var board = document.getElementById("board");
+  while (board.firstChild) {
+    board.removeChild(board.firstChild);
+  }
+  
+  // Eliminar el resaltado de movimientos
+  clearHighlightMoves();
+  // Mostrar el botón de carga y ocultar el botón de guardar y reiniciar
+  message.style.display = 'none'
+  loadButton.style.display = 'none';
+  saveButton.style.display = 'flex';
+  restart.style.display = 'flex';
+  startButton.style.display = 'none';
+  puntaje1 = 12;
+  puntaje2 = 12;
+  document.getElementById('player1').style.display = 'flex';
+  document.getElementById('player2').style.display = 'flex';
+  currentPlayer = 'white';
+  juego();
   if(currentPlayer == 'black'){
     container.style.color = 'white';
     container.style.backgroundColor = 'black';
@@ -261,20 +259,11 @@ function resetGame() {
     container.style.color = 'black';
     container.style.backgroundColor = 'white';
   }
-  initialPiecePositions.forEach(position => {
-    const { x, y } = position;
-    const cell = document.querySelector(`.cell[data-x="${x}"][data-y="${y}"]`);
-    const pieceColor = (y < 3) ? 'black' : 'white';
-    cell.classList.add(pieceColor);
-  });
-  // Eliminar el resaltado de movimientos
-  clearHighlightMoves();
-  // Mostrar el botón de carga y ocultar el botón de guardar y reiniciar
-  loadButton.style.display = 'none';
-  saveButton.style.display = 'flex';
-  restart.style.display = 'flex';
-  // Cerrar el tablero
-  board.classList.add('closed');
+  if (player1 && player2) {
+    document.getElementById('player1').textContent = `${player1}: ${puntaje1}`;
+    document.getElementById('player2').textContent = `${player2}: ${puntaje2}`;
+  }
+  updatePieceCount();
 }
 
 // Calcular las posiciones de movimiento posibles
@@ -524,8 +513,9 @@ function movePiece(sourceCell, targetCell, pieceColor) {
     clearHighlightMoves();
     selectedCell = null;
     console.log('Pieza movida');
-    changeTurn(); // Cambiar el turno después de mover la pieza
     updatePieceCount(); // Actualizar la información de la cantidad de fichas
+    changeTurn(); // Cambiar el turno después de mover la pieza
+
   } else {
     sourceCell.classList.remove(pieceColor);
     const isQueen = shouldBecomeQueen(targetCell, pieceColor);
@@ -539,8 +529,9 @@ function movePiece(sourceCell, targetCell, pieceColor) {
   clearHighlightMoves();
   selectedCell = null;
   console.log('Pieza movida');
-  changeTurn(); // Cambiar el turno después de mover la pieza
   updatePieceCount(); // Actualizar la información de la cantidad de fichas
+  changeTurn(); // Cambiar el turno después de mover la pieza
+
   }
 }
 
@@ -555,30 +546,114 @@ function shouldBecomeQueen(cell, pieceColor) {
 
 // Cambiar el turno
 function changeTurn() {
-  currentPlayer = currentPlayer === 'white' ? 'black' : 'white';  
-  message.textContent = `Turno actual: ${currentPlayer.charAt(0).toUpperCase() + currentPlayer.slice(1)}`;
-  // Agregar/clasificar el color del turno actual al cuerpo del documento
-  document.body.classList.remove('white-turn', 'black-turn');
-  document.body.classList.add(`${currentPlayer}-turn`);
+  if(puntaje1 == 0 || puntaje2 == 0 ){
+    console.log('no hago nada')
+  } else{
+    currentPlayer = currentPlayer === 'white' ? 'black' : 'white';  
+    // Agregar/clasificar el color del turno actual al cuerpo del documento
+    document.body.classList.remove('white-turn', 'black-turn');
+    document.body.classList.add(`${currentPlayer}-turn`);
+  }
 }
 
 // Actualizar la información de la cantidad de fichas
 function updatePieceCount() {
-  const piecesOnBoard = document.querySelectorAll('.cell.black, .cell.white');
+  const piecesOnBoard = document.querySelectorAll('.cell.black, .cell.white, .cell.black-queen, .cell.white-queen');
   totalPieces = piecesOnBoard.length;
+  blackQueenPieces = 0;
+  whiteQueenPieces = 0;
   blackPieces = 0;
   whitePieces = 0;
   piecesOnBoard.forEach(cell => {
     if (cell.classList.contains('black')) {
+
       blackPieces++;
     } else if (cell.classList.contains('white')) {
       whitePieces++;
+    } else if (cell.classList.contains('black-queen')) {
+      blackQueenPieces++;
+    } else if (cell.classList.contains('white-queen')) {
+      whiteQueenPieces++;
     }
   });
+
+  puntaje1 = blackPieces + blackQueenPieces*2;
+  puntaje2 = whitePieces + whiteQueenPieces*2;
+  document.getElementById('player1').textContent = `${player1}: ${puntaje1}`;
+  document.getElementById('player2').textContent = `${player2}: ${puntaje2}`;
+
+  if(puntaje1==0){
+    console.log('ha ganado jugador 2');
+    victoria(player2, puntaje2);
+  } else if(puntaje2==0){
+    console.log('ha ganado jugador 1');
+    victoria(player1, puntaje1);
+  }
+
   console.log('Cantidad de fichas en el tablero:', totalPieces);
-  console.log('Cantidad de fichas negras:', blackPieces);
-  console.log('Cantidad de fichas blancas:', whitePieces);
+  console.log(`Puntaje de: ${player1}= `,puntaje1);
+  console.log(`Puntaje de: ${player2}= `,puntaje2);
+
+  //codigo para dar victoria cuando un jugador queda sin movimientos
+  const cells = document.querySelectorAll('.cell');
+  const movdispBlancas = [];
+  const movdispNegras = [];
+  cells.forEach(cell => {
+    const pieceColor = cell.classList.contains('black') ? 'black' : cell.classList.contains('white') ? 'white' : cell.classList.contains('white-queen') ? 'white-queen' : cell.classList.contains('black-queen') ? 'black-queen':null;
+    const position = {
+      x: parseInt(cell.getAttribute('data-x')),
+      y: parseInt(cell.getAttribute('data-y')),
+      color: pieceColor,
+    };
+    const {x,y,color} = position;
+    if(color == 'white'){
+      movdispBlancas.push(determinePossibleMoves(x,y,color).length);
+    } else if(color == 'white-queen'){
+      movdispBlancas.push(determinePossibleQueenMoves(x,y,color).length);
+    } else if(color == 'black') {
+      movdispNegras.push(determinePossibleMoves(x,y,color).length);
+    } else if(color == 'black-queen'){
+      movdispNegras.push(determinePossibleQueenMoves(x,y,color).length);
+    }
+  })
+  let negras = movdisp(movdispNegras);
+  let blancas = movdisp(movdispBlancas);
+  function movdisp(arr) {
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i] !== 0) {
+        return false; // Si encontramos un elemento distinto de cero, retornamos false
+      }
+    }
+    return true; // Si todos los elementos son cero, retornamos true
+  }
+  if(negras){
+    victoria(player2,puntaje2);
+  }else if(blancas){
+    victoria(player1,puntaje1);
+  }
+  console.log(negras);
+  console.log(blancas);
+
 }
+
+ function victoria(player,puntaje){
+  var board = document.getElementById("board");
+  while (board.firstChild) {
+    board.removeChild(board.firstChild);
+  }
+  document.getElementById('player1').style.display = 'flex';
+  document.getElementById('player2').style.display = 'flex';
+  document.getElementById('player1').textContent = '\u00A0'; // Espacio en blanco
+  document.getElementById('player2').textContent = '\u00A0'; // Espacio en blanco
+  console.log('victoria');
+  board.classList.add('closed');
+  saveButton.style.display = 'none';
+  restart.style.display = 'flex';
+  startButton.style.display = 'flex';
+  message.style.display = 'flex';
+  message.style.position = 'absolute';
+  document.getElementById('message').textContent = `Ha ganado: ${player} con ${puntaje}pts`;
+ }
 
 // Limpiar el resaltado de los movimientos permitidos eliminando la clase .allowed de todas las celdas
 function clearHighlightMoves() {
@@ -603,6 +678,8 @@ function saveGameState() {
     whitePieces,
     player1,
     player2,
+    puntaje1,
+    puntaje2,
     boardState: getBoardState(),
   };
   localStorage.setItem('gameState', JSON.stringify(gameState));
@@ -633,8 +710,11 @@ function loadGame() {
     whitePieces = gameState.whitePieces; 
     player1 = gameState.player1;
     player2 = gameState.player2;
+    puntaje1 = gameState.puntaje1;
+    puntaje2 = gameState.puntaje2;
     const boardState = gameState.boardState;
     restoreBoardState(boardState);
+    updatePieceCount();
   } else {
     alert('No hay partida guardada.');
   }
