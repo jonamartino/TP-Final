@@ -5,20 +5,30 @@
     <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
+
     <div id="container" class="container">
+        <div class="index-link">
+            <a href="index.html" class="index-link">Inicio</a>   
+        </div>          
+        <div class="contact-links">
+            <a href="contact.html" class="contact-link">Contacto</a>
+            <span class="separator">|</span> <!-- Separador -->
+            <a href="https://github.com/jonamartino/TP-Final" class="contact-link">GitHub</a>
+            <span class="separator">|</span> <!-- Separador -->
+            <a href="lastgames.html" class="contact-link">Partidas Anteriores</a> <!-- Tercer enlace situado a la izquierda -->
+          </div>
         <div class="button-container">
             <button id="loadButton" class="game-button">Cargar Juego</button>
             <button id="startButton" class="game-button">Nuevo Juego</button>
             <button id="restartButton" class="game-button">Reiniciar Juego</button>
             <button id="saveButton" class="game-button">Guardar Juego</button>
-          </div>
-          <div id="player1" class="player"></div>  
+        </div>
+        <div id="player1" class="player"></div>  
         <div id="board"></div>
         <div id="player2" class="player"></div>
         <div id="message"></div> 
-        
     </div>
-
     <script src="script.js"></script>
+
 </body>
 </html>

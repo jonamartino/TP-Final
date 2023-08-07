@@ -11,8 +11,9 @@ let player1 = '';
 let player2 = '';
 let puntaje1 = 12;
 let puntaje2 = 12;
+let lastGameState = {};
+let gameCounter = parseInt(localStorage.getItem('gameCounter')) || 1;
 // Variables globales para los nombres de los jugadores
-
 let selectedCell = null; // Celda seleccionada actualmente
 let totalPieces = 0; // Cantidad de fichas en el tablero
 let blackPieces = 0; // Cantidad de fichas negras
@@ -20,8 +21,83 @@ let whitePieces = 0; // Cantidad de fichas blancas
 let blackQueenPieces = 0; //Cantidad de reinas negras
 let whiteQueenPieces = 0; //Cantidad de reinas blancas
 
+//Logica del formulario de contacto
+document.addEventListener("DOMContentLoaded", () => {
+  const contactForm = document.getElementById("contactForm");
+  const sendButton = document.getElementById("sendButton");
+
+  sendButton.addEventListener("click", (event) => {
+    event.preventDefault();
+
+    // Validación del formulario
+    const nameInput = document.getElementById("name");
+    const emailInput = document.getElementById("email");
+    const commentInput = document.getElementById("comment");
+
+    if (!nameInput.checkValidity()) {
+      alert("El nombre debe contener solo letras, números y espacios.");
+      return;
+    }
+
+    if (!emailInput.checkValidity()) {
+      alert("Por favor, ingrese un email válido.");
+      return;
+    }
+
+    if (commentInput.value.length < 5) {
+      alert("El mensaje debe tener al menos 5 caracteres.");
+      return;
+    }
+
+    // Preparar los datos para enviar en el cuerpo del correo
+    const name = nameInput.value;
+    const email = emailInput.value;
+    const comment = commentInput.value;
+
+    // Crear el enlace mailto con los datos del formulario
+    const mailtoLink = `mailto:jonamartino@gmail.com?subject=Formulario de contacto&body=Nombre: ${name}%0AEmail: ${email}%0AComentario: ${comment}`;
+
+    // Abrir el cliente de correo predeterminado
+    window.location.href = mailtoLink;
+
+    // Preparar los datos para enviar en el cuerpo de la solicitud
+    const formData = new FormData(contactForm);
+    const data = {};
+    formData.forEach((value, key) => {
+      data[key] = value;
+    });
+
+    // Realizar la consulta HTTP utilizando Fetch a una API (puede ser JSONPlaceholder o cualquier otra)
+    fetch("https://jsonplaceholder.typicode.com/posts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((responseData) => {
+        // Mostrar la respuesta del Fetch en la consola
+        console.log("Respuesta del Fetch:", responseData);
+
+        // Aquí puedes manejar la respuesta de la API o mostrar un mensaje de éxito al usuario
+        alert("Formulario enviado correctamente");
+        // O redirigir a una página de agradecimiento
+        // window.location.href = "pagina_de_agradecimiento.html";
+      })
+      .catch((error) => {
+        // Manejar errores en caso de que la consulta falle
+        console.error("Error:", error);
+        alert("Hubo un error al enviar el formulario");
+      });
+  });
+});
+
+
+
 // Agrega un listener para que el juego comience automáticamente al cargar la página
 window.addEventListener('load', () => {
+  console.log(gameCounter);
   board.classList.add('closed');
   document.getElementById('player1').style.display = 'flex';
   document.getElementById('player2').style.display = 'flex';
@@ -584,10 +660,14 @@ function updatePieceCount() {
 
   if(puntaje1==0){
     console.log('ha ganado jugador 2');
-    victoria(player2, puntaje2);
+    //victoria(player2, puntaje2);
+    alert('ha ganado ' +player2);
+    document.getElementById('player2').textContent = `Ha ganado:${player2} con ${puntaje2}pts`;
   } else if(puntaje2==0){
     console.log('ha ganado jugador 1');
-    victoria(player1, puntaje1);
+    //victoria(player1, puntaje1);
+    alert('ha ganado ' + player1);
+    document.getElementById('player1').textContent = `Ha ganado:${player1} con ${puntaje1}pts`;
   }
 
   console.log('Cantidad de fichas en el tablero:', totalPieces);
@@ -627,9 +707,13 @@ function updatePieceCount() {
     return true; // Si todos los elementos son cero, retornamos true
   }
   if(negras){
-    victoria(player2,puntaje2);
+    //victoria(player2,puntaje2);
+    alert('ha ganado ' +player2)
+    document.getElementById('player2').textContent = `Ha ganado:${player2} con ${puntaje2}pts`;
   }else if(blancas){
-    victoria(player1,puntaje1);
+    //victoria(player1,puntaje1);
+    alert('ha ganado ' +player1)
+    document.getElementById('player1').textContent = `Ha ganado:${player1} con ${puntaje1}pts`;
   }
   console.log(negras);
   console.log(blancas);
@@ -685,6 +769,36 @@ function saveGameState() {
   localStorage.setItem('gameState', JSON.stringify(gameState));
 }
 
+
+function saveLastgame() {
+  lastGameState = {
+    currentPlayer,
+    blackPieces,
+    whitePieces,
+    player1,
+    player2,
+    puntaje1,
+    puntaje2,
+    boardState: getBoardState(),
+  };
+  // Generar un identificador único para el registro actual usando el contador actual
+  const key = `lastGameState_${gameCounter}`;
+
+  // Guardar el registro en el almacenamiento local
+  localStorage.setItem(key, JSON.stringify(lastGameState));
+
+  // Incrementar el contador para el próximo registro
+  gameCounter++;
+
+  // Guardar el nuevo valor del contador en el almacenamiento local
+  localStorage.setItem('gameCounter', gameCounter.toString());
+}
+
+// Evento que se ejecuta antes de salir de la página
+window.addEventListener('beforeunload', saveLastgame);
+
+
+
 function getBoardState() {
   const boardState = [];
   const cells = document.querySelectorAll('.cell');
@@ -738,3 +852,4 @@ function saveGame() {
 }
 
 console.log('Tablero creado');
+

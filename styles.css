@@ -62,7 +62,7 @@ html, body {
 /* Contenedor para los botones */
 .button-container {
   display: flex;
-  margin-top: 10px;
+  margin-top: 75px;
   margin-bottom: 10px;
 }
 
@@ -75,11 +75,12 @@ html, body {
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: top;
   align-items: center;
   background-color: #fff; /* Color de fondo por defecto (negro) */
   color: #000; /* Color del texto por defecto (blanco) */
   transition: background-color 1s ease; /* Transición suave de 1 segundo para el cambio de color de fondo */
+  text-decoration: none;
 }
 
 body.white-turn .container {
@@ -180,5 +181,76 @@ body.black-turn .container {
 .cell.kill {
   background-color: rgba(231, 0, 0, 0.5); /* Color rojo transparente para celdas comibles
 }*/
+
+/* Estilos para el formulario de contacto */
+
+.contacto{
+  margin-top: 70px;
+}
+.contact-form {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.contact-form label,
+.contact-form input,
+.contact-form textarea,
+.contact-form button {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.contact-form button {
+  margin-top: 20px;
+}
   
-  
+.contact-links {
+  position: absolute;
+  display: flex;
+  justify-content: space-between;
+  top: 10px;
+  right: 50%; /* Sitúa el texto en el centro horizontal del contenedor */
+  transform: translateY(-50%) translateX(+200px); /* Desplaza el texto 200px hacia la izquierda */
+  display: flex; /* Utilizar flexbox para colocar los enlaces uno al lado del otro */
+}
+
+.index-link{
+  position: absolute;
+  display: flex;
+  color: inherit; /* Hereda el color del texto de su contenedor */
+  font-size: 12px;
+  text-decoration: none;
+  top: 5px;
+  transform: translateY(-50%) translateX(-100px); /* Desplaza el texto 200px hacia la izquierda */
+}
+
+.contact-link {
+  color: inherit; /* Hereda el color del texto de su contenedor */
+  margin-left: 0px; /* Espacio entre los enlaces */
+  text-decoration: none;
+  font-size: 12px;
+  display: flex;
+}
+
+.separator {
+  color: inherit; /* Color del separador, puede ser el mismo que el de los enlaces */
+  font-size: 12px;
+  line-height: 1; /* Asegura que el separador ocupe una sola línea */
+  margin-right: 5px; /* Espacio entre el separador y el siguiente enlace */
+  margin-left: 5px;
+}
+
+
+.contact-link:hover {
+  color: #717171;
+}
+.index-link:hover {
+    color: #717171;
+}
+
+.game-data {
+  display: flex; /* Mostrar los elementos en línea (horizontalmente) */
+  flex-direction: column; /* Apilar los elementos verticalmente dentro de cada contenedor */
+  margin-bottom: 20px; /* Espacio entre cada registro */
+}

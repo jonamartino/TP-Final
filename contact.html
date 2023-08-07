@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Contacto - Juego de Damas</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <div id="container" class="container">
+        <div class="index-link">
+            <a href="index.html" class="index-link">Inicio</a>   
+        </div>          
+        <div class="contact-links">
+            <a href="contact.html" class="contact-link">Contacto</a>
+            <span class="separator">|</span> <!-- Separador -->
+            <a href="https://github.com/jonamartino/TP-Final" class="contact-link">GitHub</a>
+            <span class="separator">|</span> <!-- Separador -->
+            <a href="lastgames.html" class="contact-link">Partidas Anteriores</a> <!-- Tercer enlace situado a la izquierda -->
+          </div>
+    <div id="container" class="container">
+        <h1 class="contacto">Contacto</h1>
+        <form id="contactForm" class="contact-form" action="mailto:jonamartino@gmail.com" method="post" enctype="text/plain">
+            <label for="name">Nombre Completo:</label>
+            <input type="text" id="name" name="name" required pattern="[a-zA-Z0-9\s]+" title="Solo se permiten letras, números y espacios">
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="comment">Comentario:</label>
+            <textarea id="comment" name="comment" required minlength="5"></textarea>
+
+            <button type="submit" id="sendButton" class="game-button">Enviar</button>
+        </form>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

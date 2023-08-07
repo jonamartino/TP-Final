@@ -1,0 +1,17 @@
+/* lastgames.css */
+
+
+  
+  /* Estilo para cada registro */
+  .game-data {
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #000;
+    flex-direction: row;
+    flex-wrap: nowrap;
+  }
+
+  p{
+    margin-right: 10px;
+    border: 1px solid #000;
+  }
