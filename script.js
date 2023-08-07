@@ -25,7 +25,23 @@ let whiteQueenPieces = 0; //Cantidad de reinas blancas
 window.addEventListener('beforeunload', () => {
 if(player1 != ''){ //valido para que no se carguen registros vacios al salir del inicio
   saveLastgame();
+  console.log('guardar');
 }  
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const openPopupLink = document.getElementById('openPopupLink');
+  
+  openPopupLink.addEventListener('click', (event) => {
+    event.preventDefault();
+    openPopup('lastgames.html', 800, 600);
+  });
+
+  function openPopup(url, width, height) {
+    const left = (window.innerWidth - width) / 2;
+    const top = (window.innerHeight - height) / 2;
+    window.open(url, '_blank', `width=${width},height=${height},top=${top},left=${left}`);
+  }
 });
 
 //Logica del formulario de contacto
@@ -808,15 +824,17 @@ function saveGameState() {
 }
 
 function saveLastgame() {
+  const currentDate = new Date(); // Obtener la fecha y hora actual
+  // Formatear la fecha y hora en un formato deseado
+  const formattedDate = `${currentDate.getDate()}/${currentDate.getMonth() + 1}/${currentDate.getFullYear().toString().slice(-2)} 
+                         ${currentDate.getHours()}:${currentDate.getMinutes()}`;
   lastGameState = {
-    currentPlayer,
-    blackPieces,
-    whitePieces,
     player1,
     player2,
     puntaje1,
     puntaje2,
-    boardState: getBoardState(),
+    // Agregar la fecha y hora al objeto lastGameState
+    dateTime: formattedDate
   };
   // Generar un identificador único para el registro actual usando el contador actual
   const key = `lastGameState_${gameCounter}`;
