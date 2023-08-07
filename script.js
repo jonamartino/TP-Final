@@ -21,6 +21,13 @@ let whitePieces = 0; // Cantidad de fichas blancas
 let blackQueenPieces = 0; //Cantidad de reinas negras
 let whiteQueenPieces = 0; //Cantidad de reinas blancas
 
+// Evento que se ejecuta antes de salir de la página
+window.addEventListener('beforeunload', () => {
+if(player1 != ''){ //valido para que no se carguen registros vacios al salir del inicio
+  saveLastgame();
+}  
+});
+
 //Logica del formulario de contacto
 document.addEventListener("DOMContentLoaded", () => {
   const contactForm = document.getElementById("contactForm");
@@ -155,6 +162,37 @@ loadButton.addEventListener('click', () => {
 restart.addEventListener('click', () => {
   resetGame();
 });
+
+
+// Función para cargar la partida al hacer clic en el botón "Cargar Partida"
+function loadGame() {
+  const savedState = localStorage.getItem('gameState');
+  if (savedState) {
+    const gameState = JSON.parse(savedState);
+    currentPlayer = gameState.currentPlayer;
+    blackPieces = gameState.blackPieces;
+    whitePieces = gameState.whitePieces; 
+    player1 = gameState.player1;
+    player2 = gameState.player2;
+    puntaje1 = gameState.puntaje1;
+    puntaje2 = gameState.puntaje2;
+    const boardState = gameState.boardState;
+    restoreBoardState(boardState);
+    updatePieceCount();
+  } else {
+    alert('No hay partida guardada.');
+    const respuesta = window.confirm("¿Iniciar nuevo juego?");
+    if (respuesta) {
+      message.style.display = 'none';
+      document.getElementById('player1').style.display = 'flex';
+      document.getElementById('player2').style.display = 'flex';
+      player1 = prompt('Ingrese el nombre del Jugador 1 (fichas negras):');
+      player2 = prompt('Ingrese el nombre del Jugador 2 (fichas blancas):');
+    } else {
+      window.location.reload();
+    } 
+  }
+}
 
 function juego(){
 
@@ -769,7 +807,6 @@ function saveGameState() {
   localStorage.setItem('gameState', JSON.stringify(gameState));
 }
 
-
 function saveLastgame() {
   lastGameState = {
     currentPlayer,
@@ -794,11 +831,6 @@ function saveLastgame() {
   localStorage.setItem('gameCounter', gameCounter.toString());
 }
 
-// Evento que se ejecuta antes de salir de la página
-window.addEventListener('beforeunload', saveLastgame);
-
-
-
 function getBoardState() {
   const boardState = [];
   const cells = document.querySelectorAll('.cell');
@@ -814,25 +846,6 @@ function getBoardState() {
   return boardState;
 }
 
-// Función para cargar la partida al hacer clic en el botón "Cargar Partida"
-function loadGame() {
-  const savedState = localStorage.getItem('gameState');
-  if (savedState) {
-    const gameState = JSON.parse(savedState);
-    currentPlayer = gameState.currentPlayer;
-    blackPieces = gameState.blackPieces;
-    whitePieces = gameState.whitePieces; 
-    player1 = gameState.player1;
-    player2 = gameState.player2;
-    puntaje1 = gameState.puntaje1;
-    puntaje2 = gameState.puntaje2;
-    const boardState = gameState.boardState;
-    restoreBoardState(boardState);
-    updatePieceCount();
-  } else {
-    alert('No hay partida guardada.');
-  }
-}
 
 function restoreBoardState(boardState) {
   boardState.forEach(position => {
