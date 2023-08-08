@@ -1,5 +1,3 @@
-/* lastgames.css */
-/* Estilos generales */
 body {
   font-family: Arial, sans-serif;
 }
@@ -10,6 +8,8 @@ body {
   border-collapse: collapse;
   margin: 20px 0;
   border: 1px solid #ccc;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Estilos para las celdas de la tabla */
@@ -31,25 +31,14 @@ body {
   background-color: #f2f2f2;
 }
 
-  
-  /* Estilo para cada registro */
-  .game-data {
-    justify-content: center;
-    align-items: center;
-    border: 1px solid #000;
-    flex-direction: row;
-    flex-wrap: nowrap;
-  }
+p{
+  margin-right: 10px;
+  border: 1px solid #000;
+}
+h1{
+  margin-top: 75px;
+}
 
-  p{
-    margin-right: 10px;
-    border: 1px solid #000;
-  }
-  h1{
-    margin-top: 75px;
-  }
-
-  /* Agrega este estilo en tu archivo CSS */
 .game-table th:nth-child(6):hover ,
 .game-table th:nth-child(4):hover ,
 .game-table th:nth-child(5):hover

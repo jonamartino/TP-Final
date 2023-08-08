@@ -1,5 +1,5 @@
 #board {
-  width: 400px; /* Ajusta el tamaño según tus necesidades */
+  width: 400px; 
   height: 400px;
   border: 5px solid #333; /* Marco oscuro */
   display: flex;
@@ -94,7 +94,7 @@ body.black-turn .container {
 }
 
 .cell {
-  width: 50px; /* Ajusta el tamaño según tus necesidades */
+  width: 50px;
   height: 50px;
   position: relative;
 }
@@ -171,20 +171,8 @@ body.black-turn .container {
   height: 60%;
 }
 
-/* Se quita esta funcionalidad para que el juego sea mas dificil
-.cell.allowed {
-  background-color: rgba(0, 128, 0, 0.5); /* Color verde transparente para celdas permitidas 
-}
-.cell.eatable {
-  background-color: rgba(0, 128, 0, 0.5); /* Color verde transparente para celdas comibles
-}
-.cell.kill {
-  background-color: rgba(231, 0, 0, 0.5); /* Color rojo transparente para celdas comibles
-}*/
-
 /* Estilos para el formulario de contacto */
-
-.contacto{
+.contact{
   margin-top: 75px;
 }
 .contact-form {
@@ -209,6 +197,7 @@ body.black-turn .container {
   position: absolute;
   display: flex;
   justify-content: space-between;
+  margin-right: 0px;
   top: 10px;
   right: 50%; /* Sitúa el texto en el centro horizontal del contenedor */
   transform: translateY(-50%) translateX(+200px); /* Desplaza el texto 200px hacia la izquierda */
@@ -227,7 +216,7 @@ body.black-turn .container {
 
 .contact-link {
   color: inherit; /* Hereda el color del texto de su contenedor */
-  margin-left: 0px; /* Espacio entre los enlaces */
+  margin-right: 0px;
   text-decoration: none;
   font-size: 12px;
   display: flex;
@@ -240,7 +229,6 @@ body.black-turn .container {
   margin-right: 5px; /* Espacio entre el separador y el siguiente enlace */
   margin-left: 5px;
 }
-
 
 .contact-link:hover {
   color: #717171;

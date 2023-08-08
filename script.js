@@ -9,11 +9,10 @@ const container = document.getElementById('container');
 let currentPlayer = 'white'; // Turno del jugador actual
 let player1 = '';
 let player2 = '';
-let puntaje1 = 12;
-let puntaje2 = 12;
+let score1 = 12;
+let score2 = 12;
 let lastGameState = {};
 let gameCounter = parseInt(localStorage.getItem('gameCounter')) || 1;
-// Variables globales para los nombres de los jugadores
 let selectedCell = null; // Celda seleccionada actualmente
 let totalPieces = 0; // Cantidad de fichas en el tablero
 let blackPieces = 0; // Cantidad de fichas negras
@@ -23,20 +22,18 @@ let whiteQueenPieces = 0; //Cantidad de reinas blancas
 
 // Evento que se ejecuta antes de salir de la página
 window.addEventListener('beforeunload', () => {
-if(player1 != ''){ //valido para que no se carguen registros vacios al salir del inicio
-  saveLastgame();
-  console.log('guardar');
-}  
+  if(player1 != ''){ //valido para que no se carguen registros vacios al salir del inicio
+    saveLastgame();
+  }  
 });
 
+// Evento para abrir registro de partidas como un popup
 document.addEventListener('DOMContentLoaded', () => {
   const openPopupLink = document.getElementById('openPopupLink');
-  
   openPopupLink.addEventListener('click', (event) => {
     event.preventDefault();
     openPopup('lastgames.html', 800, 600);
   });
-
   function openPopup(url, width, height) {
     const left = (window.innerWidth - width) / 2;
     const top = (window.innerHeight - height) / 2;
@@ -44,45 +41,36 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-//Logica del formulario de contacto
+// Evento para pagina de formulario de contacto
 document.addEventListener("DOMContentLoaded", () => {
   const contactForm = document.getElementById("contactForm");
   const sendButton = document.getElementById("sendButton");
-
   sendButton.addEventListener("click", (event) => {
     event.preventDefault();
-
     // Validación del formulario
     const nameInput = document.getElementById("name");
     const emailInput = document.getElementById("email");
     const commentInput = document.getElementById("comment");
-
     if (!nameInput.checkValidity()) {
       alert("El nombre debe contener solo letras, números y espacios.");
       return;
     }
-
     if (!emailInput.checkValidity()) {
       alert("Por favor, ingrese un email válido.");
       return;
     }
-
     if (commentInput.value.length < 5) {
       alert("El mensaje debe tener al menos 5 caracteres.");
       return;
     }
-
     // Preparar los datos para enviar en el cuerpo del correo
     const name = nameInput.value;
     const email = emailInput.value;
     const comment = commentInput.value;
-
     // Crear el enlace mailto con los datos del formulario
     const mailtoLink = `mailto:jonamartino@gmail.com?subject=Formulario de contacto&body=Nombre: ${name}%0AEmail: ${email}%0AComentario: ${comment}`;
-
     // Abrir el cliente de correo predeterminado
     window.location.href = mailtoLink;
-
     // Preparar los datos para enviar en el cuerpo de la solicitud
     const formData = new FormData(contactForm);
     const data = {};
@@ -116,9 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-
-
-// Agrega un listener para que el juego comience automáticamente al cargar la página
+// Evento para que el juego comience automáticamente al cargar la página
 window.addEventListener('load', () => {
   console.log(gameCounter);
   board.classList.add('closed');
@@ -132,31 +118,32 @@ window.addEventListener('load', () => {
   loadButton.style.display = 'flex';
 });
 
+// Evento para iniciar juego con boton "Nuevo Juego"
 startButton.addEventListener('click', () => {
   message.style.display = 'none';
   document.getElementById('player1').style.display = 'flex';
   document.getElementById('player2').style.display = 'flex';
   player1 = prompt('Ingrese el nombre del Jugador 1 (fichas negras):');
   player2 = prompt('Ingrese el nombre del Jugador 2 (fichas blancas):');
-  juego();
+  game();
   if (player1 && player2) {
-    document.getElementById('player1').textContent = `${player1}: ${puntaje1}`;
-    document.getElementById('player2').textContent = `${player2}: ${puntaje2}`;
+    document.getElementById('player1').textContent = `${player1}: ${score1}`;
+    document.getElementById('player2').textContent = `${player2}: ${score2}`;
   }
   board.classList.remove('closed');
-  //startButton.style.display = 'none'; // Ocultar botón de inicio
   loadButton.style.display = 'none';
   saveButton.style.display = 'flex';
   restart.style.display = 'flex';
   startButton.style.display = 'none';
 });
 
-// Agregamos el evento click al botón "Guardar Partida"
+// Evento para guardar partida con boton "Guardar Partida"
 const saveButton = document.getElementById('saveButton');
 saveButton.addEventListener('click', saveGame);
 
+// Evento para iniciar partida guardar con boton "Cargar Juego"
 loadButton.addEventListener('click', () => {
-  juego();
+  game();
   loadGame();
   if(currentPlayer == 'black'){
     container.style.color = 'white';
@@ -166,21 +153,21 @@ loadButton.addEventListener('click', () => {
     container.style.backgroundColor = 'white';
   }
   if (player1 && player2) {
-    document.getElementById('player1').textContent = `${player1}: ${puntaje1}`;
-    document.getElementById('player2').textContent = `${player2}: ${puntaje2}`;
+    document.getElementById('player1').textContent = `${player1}: ${score1}`;
+    document.getElementById('player2').textContent = `${player2}: ${score2}`;
   }
   loadButton.style.display = 'none';
   saveButton.style.display = 'flex';
   restart.style.display = 'flex';
   startButton.style.display = 'none';
-  });
+});
 
+// Evento para reiniciar partida con boton "Reiniciar Juego"
 restart.addEventListener('click', () => {
   resetGame();
 });
 
-
-// Función para cargar la partida al hacer clic en el botón "Cargar Partida"
+// Función para cargar datos de partida guardada
 function loadGame() {
   const savedState = localStorage.getItem('gameState');
   if (savedState) {
@@ -190,8 +177,8 @@ function loadGame() {
     whitePieces = gameState.whitePieces; 
     player1 = gameState.player1;
     player2 = gameState.player2;
-    puntaje1 = gameState.puntaje1;
-    puntaje2 = gameState.puntaje2;
+    score1 = gameState.score1;
+    score2 = gameState.score2;
     const boardState = gameState.boardState;
     restoreBoardState(boardState);
     updatePieceCount();
@@ -210,10 +197,9 @@ function loadGame() {
   }
 }
 
-function juego(){
-
-  // Configurar piezas iniciales
-var initialPiecePositions = [
+// Funcion para cargar datos del tablero vacio 
+function game(){
+let initialPiecePositions = [
   { x: 1, y: 0 },
   { x: 3, y: 0 },
   { x: 5, y: 0 },
@@ -334,7 +320,6 @@ for (let row = 0; row < boardSize; row++) {
         const selectedPieceColor = selectedCell.classList.contains('black') ? 'black' : 'white';
         movePiece(selectedCell, cell, selectedPieceColor); 
         const nuevoeatable = determineEatableMoves(col, row, selectedPieceColor);
-
         clearHighlightMoves();
         if(nuevoeatable.length==0){
         updatePieceCount(); // Actualizar la información de la cantidad de fichas
@@ -361,13 +346,12 @@ for (let row = 0; row < boardSize; row++) {
 }
 }
 
-
+// Funcion para volver tablero al inicio conservando nombres
 function resetGame() {
-  var board = document.getElementById("board");
+  let board = document.getElementById("board");
   while (board.firstChild) {
     board.removeChild(board.firstChild);
   }
-  
   // Eliminar el resaltado de movimientos
   clearHighlightMoves();
   // Mostrar el botón de carga y ocultar el botón de guardar y reiniciar
@@ -376,12 +360,12 @@ function resetGame() {
   saveButton.style.display = 'flex';
   restart.style.display = 'flex';
   startButton.style.display = 'none';
-  puntaje1 = 12;
-  puntaje2 = 12;
+  score1 = 12;
+  score2 = 12;
   document.getElementById('player1').style.display = 'flex';
   document.getElementById('player2').style.display = 'flex';
   currentPlayer = 'white';
-  juego();
+  game();
   if(currentPlayer == 'black'){
     container.style.color = 'white';
     container.style.backgroundColor = 'black';
@@ -390,23 +374,23 @@ function resetGame() {
     container.style.backgroundColor = 'white';
   }
   if (player1 && player2) {
-    document.getElementById('player1').textContent = `${player1}: ${puntaje1}`;
-    document.getElementById('player2').textContent = `${player2}: ${puntaje2}`;
+    document.getElementById('player1').textContent = `${player1}: ${score1}`;
+    document.getElementById('player2').textContent = `${player2}: ${score2}`;
   }
   updatePieceCount();
 }
 
-// Calcular las posiciones de movimiento posibles
+// Calcular las posiciones de movimiento posibles fichas peones
 function determinePossibleMoves(selectedPieceX, selectedPieceY, pieceColor) {
-  var possibleMoves = [];
-  var moveOffsets = [-1, 1];
+  let possibleMoves = [];
+  let moveOffsets = [-1, 1];
   if (pieceColor === 'black') {
     // Movimiento para fichas negras (hacia abajo)
-    for (var yOffset of moveOffsets) {
-      var possibleX = selectedPieceX + yOffset;
-      var possibleY = selectedPieceY + 1;
+    for (let yOffset of moveOffsets) {
+      let possibleX = selectedPieceX + yOffset;
+      let possibleY = selectedPieceY + 1;
       if (possibleX >= 0 && possibleX < boardSize && possibleY >= 0 && possibleY < boardSize) {
-        var possibleMove = { x: possibleX, y: possibleY };
+        let possibleMove = { x: possibleX, y: possibleY };
         const possibleCell = document.querySelector(`.cell[data-x="${possibleX}"][data-y="${possibleY}"]`);
         if (!possibleCell.classList.contains('black') && !possibleCell.classList.contains('white') &&
             !possibleCell.classList.contains('white-queen') && !possibleCell.classList.contains('black-queen')) {
@@ -416,11 +400,11 @@ function determinePossibleMoves(selectedPieceX, selectedPieceY, pieceColor) {
     }
   } else if (pieceColor === 'white') {
     // Movimiento para fichas blancas (hacia arriba)
-    for (var yOffset of moveOffsets) {
-      var possibleX = selectedPieceX + yOffset;
-      var possibleY = selectedPieceY - 1;
+    for (let yOffset of moveOffsets) {
+      let possibleX = selectedPieceX + yOffset;
+      let possibleY = selectedPieceY - 1;
       if (possibleX >= 0 && possibleX < boardSize && possibleY >= 0 && possibleY < boardSize) {
-        var possibleMove = { x: possibleX, y: possibleY };
+        let possibleMove = { x: possibleX, y: possibleY };
         const possibleCell = document.querySelector(`.cell[data-x="${possibleX}"][data-y="${possibleY}"]`);
         if (!possibleCell.classList.contains('white') && !possibleCell.classList.contains('black') &&
             !possibleCell.classList.contains('black-queen') && !possibleCell.classList.contains('white-queen')) {
@@ -436,6 +420,7 @@ function determinePossibleMoves(selectedPieceX, selectedPieceY, pieceColor) {
   return possibleMoves;
 }
 
+// Calcular las posiciones de movimiento posibles fichas reinas
 function determinePossibleQueenMoves(selectedPieceX, selectedPieceY, pieceColor) {
   const possibleMoves = [];
   const moveOffsets = [-1, 1];
@@ -460,23 +445,23 @@ function determinePossibleQueenMoves(selectedPieceX, selectedPieceY, pieceColor)
   return possibleMoves;
 }
 
-// Calcular las posiciones de movimiento de ataque de las fichas. Devuelve la posicion donde se movera la ficha.
+// Calcular las posiciones de movimiento de captura de las fichas peones
 function determineEatableMoves(selectedPieceX, selectedPieceY, pieceColor) {
-  var eatableMoves = [];
-  var moveOffsets = [-1, 1];
+  let eatableMoves = [];
+  let moveOffsets = [-1, 1];
   if (pieceColor === 'black') {
     // Movimiento para fichas negras (hacia abajo)
-    for (var yOffset of moveOffsets) {
-      var possibleX = selectedPieceX + yOffset;
-      var possibleY = selectedPieceY + 1;
+    for (let yOffset of moveOffsets) {
+      let possibleX = selectedPieceX + yOffset;
+      let possibleY = selectedPieceY + 1;
       if (possibleX >= 0 && possibleX < boardSize && possibleY >= 0 && possibleY < boardSize) {
         const possibleCell = document.querySelector(`.cell[data-x="${possibleX}"][data-y="${possibleY}"]`);
         if (!possibleCell.classList.contains('black') && possibleCell.classList.contains('white') ||
             !possibleCell.classList.contains('black') && possibleCell.classList.contains('white-queen')
         ){
-          var eatableX = possibleX + yOffset;
-          var eatableY = possibleY + 1;
-          var eatableMove = { x: eatableX, y: eatableY };
+          let eatableX = possibleX + yOffset;
+          let eatableY = possibleY + 1;
+          let eatableMove = { x: eatableX, y: eatableY };
           const eatableCell = document.querySelector(`.cell[data-x="${eatableX}"][data-y="${eatableY}"]`);
           if(eatableX >= 0 && eatableX < boardSize && eatableY >= 0 && eatableY < boardSize){
             if(!eatableCell.classList.contains('black') && !eatableCell.classList.contains('white') &&
@@ -494,18 +479,18 @@ function determineEatableMoves(selectedPieceX, selectedPieceY, pieceColor) {
     }
   } else if (pieceColor === 'white') {
   // Movimiento para fichas blancas (hacia arriba)
-  for (var yOffset of moveOffsets) {
-    var possibleX = selectedPieceX + yOffset;
-    var possibleY = selectedPieceY - 1;
+  for (let yOffset of moveOffsets) {
+    let possibleX = selectedPieceX + yOffset;
+    let possibleY = selectedPieceY - 1;
     if (possibleX >= 0 && possibleX < boardSize && possibleY >= 0 && possibleY < boardSize) {
-      var possibleMove = { x: possibleX, y: possibleY };
+      let possibleMove = { x: possibleX, y: possibleY };
       const possibleCell = document.querySelector(`.cell[data-x="${possibleX}"][data-y="${possibleY}"]`);
       if (!possibleCell.classList.contains('white') && possibleCell.classList.contains('black') ||
       !possibleCell.classList.contains('white') && possibleCell.classList.contains('black-queen')
       ){
-        var eatableX = possibleX + yOffset;
-        var eatableY = possibleY - 1;
-        var eatableMove = { x: eatableX, y: eatableY };
+        let eatableX = possibleX + yOffset;
+        let eatableY = possibleY - 1;
+        let eatableMove = { x: eatableX, y: eatableY };
         const eatableCell = document.querySelector(`.cell[data-x="${eatableX}"][data-y="${eatableY}"]`);
         if(eatableX >= 0 && eatableX < boardSize && eatableY >= 0 && eatableY < boardSize){
         if(!eatableCell.classList.contains('black') && !eatableCell.classList.contains('white') &&
@@ -520,9 +505,10 @@ function determineEatableMoves(selectedPieceX, selectedPieceY, pieceColor) {
     }
   }
   } 
-
   return eatableMoves;
 }
+
+// Calcular las posiciones de movimiento de captura de las fichas reinas
 function determineQueenEatable(selectedPieceX, selectedPieceY, queenColor) {
   const eatableMoves = [];
   const moveOffsets = [-1, 1];
@@ -531,13 +517,10 @@ function determineQueenEatable(selectedPieceX, selectedPieceY, queenColor) {
   for (const xOffset of moveOffsets) {
     for (const yOffset of moveOffsets) {
       if (xOffset === 0 && yOffset === 0) continue; // Saltar si el offset es (0, 0)
-
       let possibleX = selectedPieceX + xOffset;
       let possibleY = selectedPieceY + yOffset;
-
       while (possibleX >= 0 && possibleX < boardSize && possibleY >= 0 && possibleY < boardSize) {
         const possibleCell = document.querySelector(`.cell[data-x="${possibleX}"][data-y="${possibleY}"]`);
-        
         if (possibleCell.classList.contains('black')&&selectedCell.classList.contains('black-queen')){
           break;//cortar recorrido si hay una ficha de mismo color contigua 
         } else if ((selectedCell.classList.contains('black-queen') && (( 
@@ -547,11 +530,10 @@ function determineQueenEatable(selectedPieceX, selectedPieceY, queenColor) {
           ((!possibleCell.classList.contains('black') && possibleCell.classList.contains('white-queen'))))) ){
           console.log(selectedCell.classList.contains('black-queen'));  
           // Si es una celda comestible
-          var eatableX = possibleX + xOffset;
-          var eatableY = possibleY + yOffset;
-          var eatableMove = { x: eatableX, y: eatableY };
+          let eatableX = possibleX + xOffset;
+          let eatableY = possibleY + yOffset;
+          let eatableMove = { x: eatableX, y: eatableY };
           const eatableCell = document.querySelector(`.cell[data-x="${eatableX}"][data-y="${eatableY}"]`);
-
           if (eatableX >= 0 && eatableX < boardSize && eatableY >= 0 && eatableY < boardSize) {
             if (!eatableCell.classList.contains(queenColor) && !eatableCell.classList.contains('black') && !eatableCell.classList.contains('white') && !eatableCell.classList.contains('white-queen') && !eatableCell.classList.contains('black-queen')) {
               console.log("POSICION DE COMER EN: ", eatableMove)
@@ -560,7 +542,6 @@ function determineQueenEatable(selectedPieceX, selectedPieceY, queenColor) {
               killcell.classList.add('kill');
             }
           }
-
           break; // Detener el ciclo while al encontrar una celda comestible
         } else if (possibleCell.classList.contains('white')&&selectedCell.classList.contains('white-queen')){
           break; //cortar recorrido si hay una ficha de mismo color contigua 
@@ -569,9 +550,9 @@ function determineQueenEatable(selectedPieceX, selectedPieceY, queenColor) {
                    !possibleCell.classList.contains('white') && possibleCell.classList.contains('black')) ||
                    !possibleCell.classList.contains('white-queen') &&
                  ((!possibleCell.classList.contains('white') && possibleCell.classList.contains('black-queen'))))) ){
-          var eatableX = possibleX + xOffset;
-          var eatableY = possibleY + yOffset;
-          var eatableMove = { x: eatableX, y: eatableY };
+          let eatableX = possibleX + xOffset;
+          let eatableY = possibleY + yOffset;
+          let eatableMove = { x: eatableX, y: eatableY };
           const eatableCell = document.querySelector(`.cell[data-x="${eatableX}"][data-y="${eatableY}"]`);
           if (eatableX >= 0 && eatableX < boardSize && eatableY >= 0 && eatableY < boardSize) {
             console.log(!eatableCell.classList.contains(queenColor), !eatableCell.classList.contains('black'), !eatableCell.classList.contains('white') , !eatableCell.classList.contains('white-queen'), !eatableCell.classList.contains('black-queen'));
@@ -582,7 +563,6 @@ function determineQueenEatable(selectedPieceX, selectedPieceY, queenColor) {
               killcell.classList.add('kill');
             }
           }
-
           break; // Detener el ciclo while al encontrar una celda comestible
         } else {
           possibleX += xOffset;
@@ -645,7 +625,6 @@ function movePiece(sourceCell, targetCell, pieceColor) {
     console.log('Pieza movida');
     updatePieceCount(); // Actualizar la información de la cantidad de fichas
     changeTurn(); // Cambiar el turno después de mover la pieza
-
   } else {
     sourceCell.classList.remove(pieceColor);
     const isQueen = shouldBecomeQueen(targetCell, pieceColor);
@@ -661,10 +640,10 @@ function movePiece(sourceCell, targetCell, pieceColor) {
   console.log('Pieza movida');
   updatePieceCount(); // Actualizar la información de la cantidad de fichas
   changeTurn(); // Cambiar el turno después de mover la pieza
-
   }
 }
 
+// Agrega funcionalidad de reina a una ficha peon
 function shouldBecomeQueen(cell, pieceColor) {
   if (pieceColor === 'white' && cell.getAttribute('data-y') === '0') {
     return true; // Ficha blanca llegó a la última fila, convertirse en reina
@@ -676,8 +655,7 @@ function shouldBecomeQueen(cell, pieceColor) {
 
 // Cambiar el turno
 function changeTurn() {
-  if(puntaje1 == 0 || puntaje2 == 0 ){
-    console.log('no hago nada')
+  if(score1 == 0 || score2 == 0 ){
   } else{
     currentPlayer = currentPlayer === 'white' ? 'black' : 'white';  
     // Agregar/clasificar el color del turno actual al cuerpo del documento
@@ -686,7 +664,7 @@ function changeTurn() {
   }
 }
 
-// Actualizar la información de la cantidad de fichas
+// Actualizar la información de la cantidad de fichas y valida condiciones de victoria
 function updatePieceCount() {
   const piecesOnBoard = document.querySelectorAll('.cell.black, .cell.white, .cell.black-queen, .cell.white-queen');
   totalPieces = piecesOnBoard.length;
@@ -696,7 +674,6 @@ function updatePieceCount() {
   whitePieces = 0;
   piecesOnBoard.forEach(cell => {
     if (cell.classList.contains('black')) {
-
       blackPieces++;
     } else if (cell.classList.contains('white')) {
       whitePieces++;
@@ -706,28 +683,22 @@ function updatePieceCount() {
       whiteQueenPieces++;
     }
   });
-
-  puntaje1 = blackPieces + blackQueenPieces*2;
-  puntaje2 = whitePieces + whiteQueenPieces*2;
-  document.getElementById('player1').textContent = `${player1}: ${puntaje1}`;
-  document.getElementById('player2').textContent = `${player2}: ${puntaje2}`;
-
-  if(puntaje1==0){
+  score1 = blackPieces + blackQueenPieces*2;
+  score2 = whitePieces + whiteQueenPieces*2;
+  document.getElementById('player1').textContent = `${player1}: ${score1}`;
+  document.getElementById('player2').textContent = `${player2}: ${score2}`;
+  if(score1==0){
     console.log('ha ganado jugador 2');
-    //victoria(player2, puntaje2);
     alert('ha ganado ' +player2);
-    document.getElementById('player2').textContent = `Ha ganado:${player2} con ${puntaje2}pts`;
-  } else if(puntaje2==0){
+    document.getElementById('player2').textContent = `Ha ganado:${player2} con ${score2}pts`;
+  } else if(score2==0){
     console.log('ha ganado jugador 1');
-    //victoria(player1, puntaje1);
     alert('ha ganado ' + player1);
-    document.getElementById('player1').textContent = `Ha ganado:${player1} con ${puntaje1}pts`;
+    document.getElementById('player1').textContent = `Ha ganado:${player1} con ${score1}pts`;
   }
-
   console.log('Cantidad de fichas en el tablero:', totalPieces);
-  console.log(`Puntaje de: ${player1}= `,puntaje1);
-  console.log(`Puntaje de: ${player2}= `,puntaje2);
-
+  console.log(`Puntaje de: ${player1}= `,score1);
+  console.log(`Puntaje de: ${player2}= `,score2);
   //codigo para dar victoria cuando un jugador queda sin movimientos
   const cells = document.querySelectorAll('.cell');
   const movdispBlancas = [];
@@ -760,38 +731,18 @@ function updatePieceCount() {
     }
     return true; // Si todos los elementos son cero, retornamos true
   }
-  if(negras){
-    //victoria(player2,puntaje2);
-    alert('ha ganado ' +player2)
-    document.getElementById('player2').textContent = `Ha ganado:${player2} con ${puntaje2}pts`;
-  }else if(blancas){
-    //victoria(player1,puntaje1);
-    alert('ha ganado ' +player1)
-    document.getElementById('player1').textContent = `Ha ganado:${player1} con ${puntaje1}pts`;
+  if(score1!==0 && score2!==0){//valido para que no se muestre dos veces el alert
+    if(negras){
+      alert('ha ganado ' +player2)
+      document.getElementById('player2').textContent = `Ha ganado:${player2} con ${score2}pts`;
+    }else if(blancas){
+      alert('ha ganado ' +player1)
+      document.getElementById('player1').textContent = `Ha ganado:${player1} con ${score1}pts`;
+    }
+    console.log(negras);
+    console.log(blancas);
   }
-  console.log(negras);
-  console.log(blancas);
-
 }
-
- function victoria(player,puntaje){
-  var board = document.getElementById("board");
-  while (board.firstChild) {
-    board.removeChild(board.firstChild);
-  }
-  document.getElementById('player1').style.display = 'flex';
-  document.getElementById('player2').style.display = 'flex';
-  document.getElementById('player1').textContent = '\u00A0'; // Espacio en blanco
-  document.getElementById('player2').textContent = '\u00A0'; // Espacio en blanco
-  console.log('victoria');
-  board.classList.add('closed');
-  saveButton.style.display = 'none';
-  restart.style.display = 'flex';
-  startButton.style.display = 'flex';
-  message.style.display = 'flex';
-  message.style.position = 'absolute';
-  document.getElementById('message').textContent = `Ha ganado: ${player} con ${puntaje}pts`;
- }
 
 // Limpiar el resaltado de los movimientos permitidos eliminando la clase .allowed de todas las celdas
 function clearHighlightMoves() {
@@ -809,6 +760,7 @@ function clearHighlightMoves() {
   });
 }
 
+// Guarda estado actual del tablero para boton "Guardar Partida"
 function saveGameState() {
   const gameState = {
     currentPlayer,
@@ -816,13 +768,14 @@ function saveGameState() {
     whitePieces,
     player1,
     player2,
-    puntaje1,
-    puntaje2,
+    score1,
+    score2,
     boardState: getBoardState(),
   };
   localStorage.setItem('gameState', JSON.stringify(gameState));
 }
 
+// Guarda estado actual de tablero para ser almacenado en pagina "Partidas Anteriores"
 function saveLastgame() {
   const currentDate = new Date(); // Obtener la fecha y hora actual
   // Formatear la fecha y hora en un formato deseado
@@ -831,24 +784,22 @@ function saveLastgame() {
   lastGameState = {
     player1,
     player2,
-    puntaje1,
-    puntaje2,
+    score1,
+    score2,
     // Agregar la fecha y hora al objeto lastGameState
     dateTime: formattedDate
   };
   // Generar un identificador único para el registro actual usando el contador actual
   const key = `lastGameState_${gameCounter}`;
-
   // Guardar el registro en el almacenamiento local
   localStorage.setItem(key, JSON.stringify(lastGameState));
-
   // Incrementar el contador para el próximo registro
   gameCounter++;
-
   // Guardar el nuevo valor del contador en el almacenamiento local
   localStorage.setItem('gameCounter', gameCounter.toString());
 }
 
+// Obtiene estado actual del tablero para ser guardado
 function getBoardState() {
   const boardState = [];
   const cells = document.querySelectorAll('.cell');
@@ -864,7 +815,7 @@ function getBoardState() {
   return boardState;
 }
 
-
+// Restaura estado anterior guardado del tablero 
 function restoreBoardState(boardState) {
   boardState.forEach(position => {
     const { x, y, color } = position;
@@ -881,6 +832,3 @@ function saveGame() {
   saveGameState();
   alert('Partida guardada exitosamente.');
 }
-
-console.log('Tablero creado');
-

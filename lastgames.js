@@ -1,36 +1,16 @@
 function loadAndDisplayData() {
   const dataContainer = document.getElementById('data-container');
-  // Limpiar el contenedor de datos antes de mostrar los registros
-  dataContainer.innerHTML = '';
-
   // Crear una tabla para mostrar los datos
-  const table = document.createElement('table');
-  table.className = 'game-table';
-
-  // Crear la fila de cabecera
-  const headerRow = document.createElement('tr');
-
-  // Agregar celdas de cabecera
-  const headers = ["Id", "Jugador 1", "Jugador 2", "Puntaje 1", "Puntaje 2", "Fecha"];
-  for (const headerText of headers) {
-      const headerCell = document.createElement('th');
-      headerCell.textContent = headerText;
-      headerRow.appendChild(headerCell);
-  }
-
-  // Agregar la fila de cabecera a la tabla
-  table.appendChild(headerRow);
-
+  const table = document.getElementById('data-table');
+  const tbody = document.getElementById('table-body');
   // Obtener todas las claves que empiezan con 'lastGameState_'
   const gameStateKeys = Object.keys(localStorage).filter(key => key.startsWith('lastGameState_'));
-
   // Ordenar las claves de manera numérica
   gameStateKeys.sort((a, b) => {
     const numA = parseInt(a.split('_')[1]);
     const numB = parseInt(b.split('_')[1]);
     return numA - numB;
   });
-
   // Iterar sobre las claves ordenadas y mostrar los datos
   for (const key of gameStateKeys) {
     const gameStateString = localStorage.getItem(key);
@@ -49,30 +29,41 @@ function loadAndDisplayData() {
     player2Cell.textContent = lastGameState.player2;
     row.appendChild(player2Cell);
 
-    const puntaje1Cell = document.createElement('td');
-    puntaje1Cell.textContent = lastGameState.puntaje1;
-    row.appendChild(puntaje1Cell);
+    const score1Cell = document.createElement('td');
+    score1Cell.textContent = lastGameState.score1;
+    row.appendChild(score1Cell);
 
-    const puntaje2Cell = document.createElement('td');
-    puntaje2Cell.textContent = lastGameState.puntaje2;
-    row.appendChild(puntaje2Cell);
+    const score2Cell = document.createElement('td');
+    score2Cell.textContent = lastGameState.score2;
+    row.appendChild(score2Cell);
 
     const dateTimeCell = document.createElement('td');
     dateTimeCell.textContent = lastGameState.dateTime;
     row.appendChild(dateTimeCell);
 
-    table.appendChild(row);
+    tbody.appendChild(row);
   }
-
   // Añadir la tabla al contenedor
+  table.appendChild(tbody);
   dataContainer.appendChild(table);
 }
+
 document.addEventListener('DOMContentLoaded', () => {
   loadAndDisplayData();
-
-  const p1Header = document.querySelector('.game-table th:nth-child(4)');
-  p1Header.addEventListener('click', () => {
+  const p1 = document.getElementById("s1");
+  p1.addEventListener('click', () => {
       sortTableByPuntaje1();
+      console.log('click')
+  });
+  const p2 = document.getElementById("s2");
+  p2.addEventListener('click', () => {
+      sortTableByPuntaje2();
+      console.log('click')
+  });
+  const d = document.getElementById("date");
+  date.addEventListener('click', () => {
+      sortTableByDate();
+      console.log('click')
   });
 });
 
@@ -81,15 +72,41 @@ function sortTableByPuntaje1() {
   console.log(table); // Verifica si table está seleccionando el elemento correcto
   const tbody = table.querySelector('tbody');
   const rows = Array.from(tbody.querySelectorAll('tr'));
-
   rows.sort((rowA, rowB) => {
     const puntajeA = parseInt(rowA.querySelector('td:nth-child(4)').textContent);
     const puntajeB = parseInt(rowB.querySelector('td:nth-child(4)').textContent);
-    return puntajeA - puntajeB;
+    return puntajeB - puntajeA;
   });
+  rows.forEach(row => {
+    tbody.appendChild(row);
+  });
+}
 
-  console.log(rows); // Verifica si rows contiene las filas correctas
+function sortTableByPuntaje2() {
+  const table = document.querySelector('.game-table');
+  console.log(table); // Verifica si table está seleccionando el elemento correcto
+  const tbody = table.querySelector('tbody');
+  const rows = Array.from(tbody.querySelectorAll('tr'));
+  rows.sort((rowA, rowB) => {
+    const puntajeA = parseInt(rowA.querySelector('td:nth-child(5)').textContent);
+    const puntajeB = parseInt(rowB.querySelector('td:nth-child(5)').textContent);
+    return puntajeB - puntajeA;
+  });
+  rows.forEach(row => {
+    tbody.appendChild(row);
+  });
+}
 
+function sortTableByDate() {
+  const table = document.querySelector('.game-table');
+  console.log(table); // Verifica si table está seleccionando el elemento correcto
+  const tbody = table.querySelector('tbody');
+  const rows = Array.from(tbody.querySelectorAll('tr'));
+  rows.sort((rowA, rowB) => {
+    const puntajeA = parseInt(rowA.querySelector('td:nth-child(6)').textContent);
+    const puntajeB = parseInt(rowB.querySelector('td:nth-child(6)').textContent);
+    return puntajeB - puntajeA;
+  });
   rows.forEach(row => {
     tbody.appendChild(row);
   });
